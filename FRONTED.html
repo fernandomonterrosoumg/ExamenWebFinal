@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js API Consumer</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Grupo con Más Géneros</h1>
+    <table>
+      <tr>
+        <th>Nombre</th>
+        <th>Fecha de Formación</th>
+        <!-- Más columnas si son necesarias -->
+      </tr>
+      <tr>
+        <td>{{ grupoMasGeneros.nombre }}</td>
+        <td>{{ grupoMasGeneros.fechaFormacion }}</td>
+        <!-- Más celdas de datos si son necesarias -->
+      </tr>
+    </table>
+    
+    <h1>Grupos con Músicos</h1>
+    <table v-for="grupo in gruposConMusicos" :key="grupo.idGrupo">
+      <thead>
+        <tr>
+          <th>Nombre del Grupo</th>
+          <th>Músicos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ grupo.nombre }}</td>
+          <td>
+            <ul>
+              <li v-for="musico in grupo.musicos" :key="musico.idMusico">
+                {{ musico.nombre }} - {{ musico.instrumento }} -{{ musico.fechaFormacion }}
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Incluir Vue.js y Axios desde CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        gruposConMusicos: [],
+        grupoMasGeneros: []
+      },
+      mounted() {
+        this.obtenerGruposConMusicos();
+        this.obtenerGrupoMasGeneros();
+      },
+      methods: {
+        obtenerGruposConMusicos() {
+          axios.get('https://localhost:7023/api/Examen/GetGruposConMusicos')
+            .then(response => {
+              this.gruposConMusicos = response.data.data;
+            })
+            .catch(error => {
+              console.error('Hubo un error al obtener los grupos con músicos:', error);
+            });
+        },
+        obtenerGrupoMasGeneros() {
+          axios.get('https://localhost:7023/api/Examen/GetGrupoMasGeneros')
+            .then(response => {
+              this.grupoMasGeneros = response.data.data;
+            })
+            .catch(error => {
+              console.error('Hubo un error al obtener el grupo con más géneros:', error);
+            });
+        }
+      }
+    });
+  </script>
+</body>
+</html>
